@@ -1,23 +1,24 @@
 package com.hackathon.finservice.util;
 
 import com.hackathon.finservice.exception.InvalidTokenException;
+import com.hackathon.finservice.entity.Token;
+import com.hackathon.finservice.repository.TokenRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
 import java.util.Date;
 import java.util.Map;
-import java.util.Set;
-import java.util.concurrent.ConcurrentHashMap;
+import java.util.Optional;
 
 @Component
 public class JwtUtil {
 
-    // Arbitrary number
-    private static final int FLUSH_AMOUNT = 30;
-    private final Set<String> invalidatedTokens = ConcurrentHashMap.newKeySet();
+    private static final int CLEAN_INVALIDATED_PERIOD = 3600000;
+    private final TokenRepository tokenRepository;
 
     @Value("${jwt.secret}")
     private String SECRET_KEY;
@@ -30,6 +31,10 @@ public class JwtUtil {
 
     @Value("${jwt.prefix}")
     private String PREFIX;
+
+    public JwtUtil(TokenRepository tokenRepository) {
+        this.tokenRepository = tokenRepository;
+    }
 
     public String generateToken(String email) {
         return createToken(Jwts.claims(), email);
@@ -53,18 +58,19 @@ public class JwtUtil {
     }
 
     public void invalidateToken(String token) {
-
         token = stripTokenPrefix(token);
 
-        invalidatedTokens.add(token);
-
-        if (invalidatedTokens.size() > FLUSH_AMOUNT) {
-            invalidatedTokens.removeIf(this::isTokenExpired);
-        }
+        Token invalidToken = new Token(token, new Date(), getExpiration(token));
+        tokenRepository.save(invalidToken);
     }
 
     public String getHeader() {
         return HEADER;
+    }
+
+    @Scheduled(fixedRate = CLEAN_INVALIDATED_PERIOD)
+    public void removeExpiredTokens() {
+        tokenRepository.deleteByExpirationBefore(new Date());
     }
 
     private String createToken(Map<String, Object> claims, String subject) {
@@ -89,9 +95,11 @@ public class JwtUtil {
     }
 
     private boolean isTokenExpired(String token) {
-        return extractAllClaims(token)
-                .getExpiration()
-                .before(new Date());
+        return getExpiration(token).before(new Date());
+    }
+
+    private Date getExpiration(String token) {
+        return extractAllClaims(token).getExpiration();
     }
 
     private String stripTokenPrefix(String token) {
@@ -100,6 +108,7 @@ public class JwtUtil {
     }
 
     private boolean isInvalidated(String token) {
-        return invalidatedTokens.contains(token);
+        Optional<Token> tokenEntity = tokenRepository.findByToken(token);
+        return tokenEntity.isPresent() && tokenEntity.get().getInvalidatedAt() != null;
     }
 }
