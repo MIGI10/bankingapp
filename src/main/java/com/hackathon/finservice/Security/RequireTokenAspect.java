@@ -26,14 +26,14 @@ public class RequireTokenAspect {
         this.jwtUtil = jwtUtil;
     }
 
-    @Before("@annotation(com.hackathon.finservice.Security.RequireToken)") // Intercepts methods with @RequireToken
+    @Before("@annotation(com.hackathon.finservice.Security.RequireToken)")
     public void validateToken() throws IOException {
 
-        String token = request.getHeader(jwtUtil.getHeader()); // Get the token from the Authorization header
+        String token = request.getHeader(jwtUtil.getHeader());
 
         try {
-            token = jwtUtil.validateToken(token); // Validate the token
-            request.setAttribute("token", token); // Attach the valid token to the request
+            token = jwtUtil.validateToken(token);
+            request.setAttribute("token", token);
         } catch (InvalidTokenException e) {
             throw new InvalidTokenException("Access Denied");
         }

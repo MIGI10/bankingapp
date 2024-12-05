@@ -16,11 +16,11 @@ public class Transaction {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "account_id", nullable = false)
+    @JoinColumn(name = "source_account_id", nullable = false)
     private Account sourceAccount;
 
     @ManyToOne
-    @JoinColumn(name = "account_id")
+    @JoinColumn(name = "target_account_id")
     private Account targetAccount;
 
     private BigDecimal amount;

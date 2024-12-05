@@ -96,6 +96,7 @@ public class JwtUtil {
     }
 
     private String stripTokenPrefix(String token) {
+        if (token == null) throw new InvalidTokenException("Null token");
         return token.startsWith(PREFIX + " ") ? token.substring(PREFIX.length() + 1) : token;
     }
 
