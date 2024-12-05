@@ -3,6 +3,7 @@ package com.hackathon.finservice.Controllers;
 import com.hackathon.finservice.DTO.account.CreateAccountRequestDTO;
 import com.hackathon.finservice.DTO.transaction.deposit.DepositRequestDTO;
 import com.hackathon.finservice.DTO.transaction.deposit.DepositResponseDTO;
+import com.hackathon.finservice.DTO.transaction.history.HistoryResponseDTO;
 import com.hackathon.finservice.DTO.transaction.transfer.TransferRequestDTO;
 import com.hackathon.finservice.DTO.transaction.transfer.TransferResponseDTO;
 import com.hackathon.finservice.DTO.transaction.withdraw.WithdrawRequestDTO;
@@ -14,10 +15,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/account")
@@ -44,8 +44,8 @@ public class AccountController {
     @RequireToken
     public ResponseEntity<DepositResponseDTO> depositFunds(@Valid @RequestBody DepositRequestDTO request, HttpServletRequest httpRequest) {
         String token = (String) httpRequest.getAttribute("token");
-        //transactionService.deposit(request, token);
-        DepositResponseDTO response = new DepositResponseDTO("PIN created successfully");
+        transactionService.deposit(request, token);
+        DepositResponseDTO response = new DepositResponseDTO("Cash deposited successfully");
         return ResponseEntity.ok(response);
     }
 
@@ -53,8 +53,8 @@ public class AccountController {
     @RequireToken
     public ResponseEntity<WithdrawResponseDTO> withdrawFunds(@Valid @RequestBody WithdrawRequestDTO request, HttpServletRequest httpRequest) {
         String token = (String) httpRequest.getAttribute("token");
-        //transactionService.withdraw(request, token);
-        WithdrawResponseDTO response = new WithdrawResponseDTO("PIN updated successfully");
+        transactionService.withdraw(request, token);
+        WithdrawResponseDTO response = new WithdrawResponseDTO("Cash withdrawn successfully");
         return ResponseEntity.ok(response);
     }
 
@@ -62,17 +62,16 @@ public class AccountController {
     @RequireToken
     public ResponseEntity<TransferResponseDTO> transferFunds(@Valid @RequestBody TransferRequestDTO request, HttpServletRequest httpRequest) {
         String token = (String) httpRequest.getAttribute("token");
-        //transactionService.transfer(request, token);
-        TransferResponseDTO response = new TransferResponseDTO("PIN updated successfully");
+        transactionService.transfer(request, token);
+        TransferResponseDTO response = new TransferResponseDTO("Fund transferred successfully");
         return ResponseEntity.ok(response);
     }
 
-    @PostMapping("/transactions")
+    @GetMapping("/transactions")
     @RequireToken
-    public ResponseEntity<TransferResponseDTO> getTransactions(@Valid @RequestBody TransferRequestDTO request, HttpServletRequest httpRequest) {
+    public ResponseEntity<List<HistoryResponseDTO>> getTransactions(@Valid HttpServletRequest httpRequest) {
         String token = (String) httpRequest.getAttribute("token");
-        //transactionService.transfer(request, token);
-        TransferResponseDTO response = new TransferResponseDTO("PIN updated successfully");
-        return ResponseEntity.ok(response);
+        List<HistoryResponseDTO> history = transactionService.getHistory(token);
+        return ResponseEntity.ok(history);
     }
 }

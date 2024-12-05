@@ -38,8 +38,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 
-    @ExceptionHandler(InvalidInputException.class)
-    public ResponseEntity<String> handleUserNotFound(InvalidInputException ex) {
+    @ExceptionHandler(InsufficientBalanceException.class)
+    public ResponseEntity<String> handleUserNotFound(InsufficientBalanceException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(ex.getMessage());
     }
 

@@ -58,4 +58,12 @@ public class Account {
     public void preUpdate() {
         updatedAt = LocalDateTime.now();
     }
+
+    public void fund(BigDecimal amount) {
+        balance = balance.add(amount);
+    }
+
+    public void extract(BigDecimal amount) {
+        balance = balance.subtract(amount);
+    }
 }

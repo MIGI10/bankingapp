@@ -14,6 +14,9 @@ public interface AccountRepository extends JpaRepository<Account, Long> {
     @Query("SELECT a FROM Account a WHERE a.user.email = :email")
     List<Account> findAllByEmail(String email);
 
+    @Query("SELECT a FROM Account a WHERE a.number = :accountNumber")
+    Optional<Account> findByNumber(String accountNumber);
+
     default Optional<Account> findByEmailAndIndex(String email, int index) {
         List<Account> accounts = findAllByEmail(email);
         if (index >= 0 && index < accounts.size()) {
