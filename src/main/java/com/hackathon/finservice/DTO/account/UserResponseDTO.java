@@ -1,6 +1,5 @@
 package com.hackathon.finservice.DTO.account;
 
-import com.hackathon.finservice.Entities.User;
 import lombok.Getter;
 
 @Getter

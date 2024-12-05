@@ -32,8 +32,8 @@ public class JwtUtil {
     @Value("${jwt.prefix}")
     private String PREFIX;
 
-    public String generateToken(String accountId) {
-        return createToken(Map.of(), accountId);
+    public String generateToken(String email) {
+        return createToken(Jwts.claims(), email);
     }
 
     public String validateToken(String token) {

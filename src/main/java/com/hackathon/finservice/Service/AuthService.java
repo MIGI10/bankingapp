@@ -8,6 +8,7 @@ import com.hackathon.finservice.Entities.Account;
 import com.hackathon.finservice.Entities.User;
 import com.hackathon.finservice.Exception.BadCredentialsException;
 import com.hackathon.finservice.Exception.UserExistsException;
+import com.hackathon.finservice.Exception.UserNotFoundException;
 import com.hackathon.finservice.Repositories.AccountRepository;
 import com.hackathon.finservice.Repositories.UserRepository;
 import com.hackathon.finservice.Util.JwtUtil;
@@ -57,14 +58,14 @@ public class AuthService {
                 request.getName(),
                 request.getEmail(),
                 user.getPasswordHash(),
-                account.getNumber(),
-                account.getType()
+                account.getType(),
+                account.getNumber()
         );
     }
 
     public LoginResponseDTO login(LoginRequestDTO request) {
         User user = userRepository.findByIdentifier(request.getIdentifier())
-                .orElseThrow(() -> new BadCredentialsException("User not found for the given identifier: " + request.getIdentifier()));
+                .orElseThrow(() -> new UserNotFoundException("User not found for the given identifier: " + request.getIdentifier()));
 
         if (noHashMatch(request.getPassword(), user.getPasswordHash())) {
             throw new BadCredentialsException("Bad credentials");

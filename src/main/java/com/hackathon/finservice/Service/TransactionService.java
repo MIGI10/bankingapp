@@ -65,6 +65,7 @@ public class TransactionService {
         transactionRepository.save(transaction);
 
         mainAccount.fund(depositAmount);
+        accountRepository.save(mainAccount);
     }
 
     public void withdraw(WithdrawRequestDTO request, String token) {
@@ -94,6 +95,7 @@ public class TransactionService {
         transactionRepository.save(transaction);
 
         mainAccount.extract(withdrawAmount);
+        accountRepository.save(mainAccount);
     }
 
     public void transfer(TransferRequestDTO request, String token) {
@@ -124,6 +126,8 @@ public class TransactionService {
 
         mainAccount.extract(transferAmount);
         targetAccount.fund(transferAmount);
+        accountRepository.save(mainAccount);
+        accountRepository.save(targetAccount);
 
         //  TODO: If more than 4 transfers are made to the same account in less than 5 seconds, these transactions should be considered fraud.
     }

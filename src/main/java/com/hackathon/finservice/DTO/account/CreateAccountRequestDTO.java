@@ -7,8 +7,8 @@ import lombok.Getter;
 public class CreateAccountRequestDTO {
 
     @NotBlank(message = "Account number is required")
-    private String number;
+    private String accountNumber;
 
     @NotBlank(message = "Account type is required")
-    private String type;
+    private String accountType;
 }

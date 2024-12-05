@@ -37,13 +37,13 @@ public class DashboardService {
         Account mainAccount = accountRepository.findByEmailAndIndex(email, 0)
                 .orElseThrow(() -> new AccountMismatchException("Main account not found"));
 
-        if (!mainAccount.getNumber().equals(request.getNumber())) {
+        if (!mainAccount.getNumber().equals(request.getAccountNumber())) {
             throw new AccountMismatchException("Account number does not match Main account");
         }
 
         String newAccountNumber = UUID.randomUUID().toString();
 
-        Account newAccount = new Account(mainAccount.getUser(), newAccountNumber, request.getType());
+        Account newAccount = new Account(mainAccount.getUser(), newAccountNumber, request.getAccountType());
 
         accountRepository.save(newAccount);
     }

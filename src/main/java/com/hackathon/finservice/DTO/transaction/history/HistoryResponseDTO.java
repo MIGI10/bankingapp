@@ -1,5 +1,8 @@
 package com.hackathon.finservice.DTO.transaction.history;
 
+import lombok.Getter;
+
+@Getter
 public class HistoryResponseDTO {
 
     private Long id;

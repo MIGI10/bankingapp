@@ -1,5 +1,8 @@
 package com.hackathon.finservice.DTO.transaction.deposit;
 
+import lombok.Getter;
+
+@Getter
 public class DepositResponseDTO {
 
     private String msg;
